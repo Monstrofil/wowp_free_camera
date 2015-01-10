@@ -75,6 +75,20 @@ class FreeCamera():
         temp.sort()
         return temp[0][1]
 
+    def get_nearest_model(self): #nearest bomb or rocket
+        temp = []
+        items = BigWorld.models()
+        owner_pos = self.position
+        for item in items:
+            entity = item
+            entity_pos = entity.position
+            temp.append([self.dist(entity_pos, owner_pos) ,entity])
+        if len(temp) != 0:
+            temp.sort()
+            return temp[0][1]
+        else:
+            return BigWorld.player()
+
     def btn(self): #moving camera
         if BigWorld.isKeyDown(getattr(Keys, 'KEY_S'), 0):
             self.speed_back += 0.001 * self.a
@@ -155,9 +169,14 @@ class FreeCamera():
                 self.aircam = None
 
             if event.key == getattr(Keys, 'KEY_N') and event.isKeyDown(): #nearest
-                print self.get_nearest()
                 cam1 = BigWorld.CursorCamera()
                 cam1.target = self.get_nearest().matrix
+                cam1.source = BigWorld.dcursor().matrix
+                BigWorld.camera(cam1)
+
+            if event.key == getattr(Keys, 'KEY_B') and event.isKeyDown(): #nearest model
+                cam1 = BigWorld.CursorCamera()
+                cam1.target = self.get_nearest_model().matrix
                 cam1.source = BigWorld.dcursor().matrix
                 BigWorld.camera(cam1)
             
